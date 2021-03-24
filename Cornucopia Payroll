@@ -1,0 +1,127 @@
+
+def Taxes (annual):
+    std_deduct = annual - 12550
+
+    TBracket = (10, 12, 22, 24, 32)
+    TaxRate = (9950, 40525, 86375, 164925, 209425)
+
+    f_tax = 0
+
+    for i in range (len(TBracket)):
+        temp = std_deduct - TaxRate[i]
+
+        if temp >= 0:
+            if i != 0:
+                f_tax = (TaxRate[i] - TaxRate[i - 1]) * (TBracket[i]/100) + f_tax
+            else:
+                f_tax = (TaxRate[i]) * (TBracket[i] / 100) + f_tax
+
+        else:
+            if i == 0:
+                f_tax = annual * (TBracket[i]/100)
+                break
+            else:
+                f_tax = (std_deduct - TaxRate[i - 1]) * (TBracket[i] / 100) + f_tax
+                break
+
+    return (f_tax)
+
+def STax (annual):
+    std_deduct = annual - 8000
+
+    TBracket = (4, 4.5, 5.25, 5.9, 6.09, 6.41)
+    TaxRate = (8500, 11700, 13900, 21400, 80650, 215400)
+
+    stax = 0
+
+    for i in range (len(TBracket)):
+        temp = std_deduct - TaxRate[i]
+
+        if temp >= 0:
+
+            if i != 0:
+                stax = (TaxRate[i] - TaxRate[i-1]) * (TBracket[i]/100) + stax
+            else:
+                stax = (TaxRate[i]) * (TBracket[i] / 100) + stax
+
+        else:
+            if i == 0:
+                stax = std_deduct * (TBracket[i]/100)
+                break
+            else:
+                stax = (std_deduct - TaxRate[i - 1]) * (TBracket[i]/100) + stax
+                break
+
+    return (stax)
+
+def LTax (annual):
+    std_deduct = annual - 8000
+
+    TBracket = (3.078, 3.762, 3.819)
+    TaxRate = (12000, 25000, 50000)
+
+    l_tax = 0
+
+    for i in range (len(TBracket)):
+        temp = std_deduct - TaxRate[i]
+
+        if temp >= 0:
+
+            if i != 0:
+                l_tax = (TaxRate[i] - TaxRate[i - 1]) * (TBracket[i] / 100) + l_tax
+            else:
+                l_tax = TaxRate[i] * (TBracket[i] / 100) + l_tax
+
+        else:
+            if i == 0:
+                l_tax = std_deduct * (TBracket[i]/100)
+                break
+            else:
+                l_tax = (std_deduct - TaxRate[i-1]) * (TBracket[i]/100) + l_tax
+                break
+
+    return (l_tax)
+
+def Grosspay(base_p, hr, tips):
+
+    if hr > 40:
+        OT = hr - 40
+        gross_p = base_p * (40 + (OT * 1.5)) + tips
+
+    else:
+        gross_p = (base_p * hr) + tips
+
+    annual_income = gross_p * 52.14
+
+    f_tax = Taxes (annual_income)/52.14
+    ss_tax = (lambda x: gross_p * x)(.062)
+    m_tax = (lambda x: gross_p * x)(.0145)
+    state_tax = STax (annual_income)/52.14
+    local_tax = LTax (annual_income)/52.14
+    sum = local_tax + state_tax + m_tax + ss_tax + f_tax
+
+    net_p = gross_p - (f_tax + ss_tax + m_tax + state_tax + local_tax)
+
+    print ("\nGross Pay: ${:.2f}".format(gross_p) + "\n")
+    print ("Tax Liability: (${:.2f})".format(sum) + "\n")
+    print ("Net Pay: ${:.2f}".format(net_p) + "\n")
+
+    print ("Tax Breakdown:" + "\n")
+    print ("Federal Tax: ${:.2f}".format(f_tax))
+    print ("Social Security: ${:.2f}".format(ss_tax))
+    print ("Medicare: ${:.2f}".format(m_tax))
+    print ("New York State: ${:.2f}".format(state_tax))
+    print ("New York Local: ${:.2f}".format(local_tax))
+
+print ("Welcome to the Simple Payroll Calculator! \n")
+print ("We will calculate this weeks payroll for you! \n")
+print ("All we need are your: Hourly rate, Hours worked, and any Tips. \n")
+print ("This is assuming that you have no dependents, no tax exemptions/allowances.\n")
+
+x = float (input("Please enter your Hourly rate: "))
+y = float (input("\nPlease enter your Hours worked: "))
+z = float (input("\nPlease enter your Tips (if none enter zero): "))
+
+a = Grosspay (x, y, z)
+
+a
